@@ -1,0 +1,30 @@
+{
+  "publish_rate_hz": 100.0,
+  "rigid_bodies": {
+    "groundplane": {
+      "position": [0.0, 0.0, 0.0],
+      "orientation": [0.0, 0.0, 0.0, 1.0],
+      "is_groundplane": true
+    },
+    "obstacle1": {
+      "position": [0.657, -0.019, 4.614],
+      "orientation": [0.018, 0.892, 0.001, -0.451]
+    },
+    "obstacle2": {
+      "position": [0.640, -0.028, 1.875],
+      "orientation": [0.0, 0.0, 0.0, 1.0]
+    },
+    "obstacle3": {
+      "position": [3.384, -0.079, 2.245],
+      "orientation": [0.0, 0.0, 0.0, 1.0]
+    },
+    "obstacle4": {
+      "position": [2.169, -0.014, 0.520],
+      "orientation": [0.0, 0.0, 0.0, 1.0]
+    },
+    "obstacle5": {
+      "position": [2.450, -0.066, 3.994],
+      "orientation": [0.0, 0.0, 0.0, 1.0]
+    }
+  }
+}

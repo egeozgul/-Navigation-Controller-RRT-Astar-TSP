@@ -1,0 +1,36 @@
+# Vendored / unrelated nested repos (not part of this project)
+vendor/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Runtime / local state
+planner_ema_filter.state
+*.log
+
+# Monte Carlo screenshots (regenerated offline)
+results/
+
+# ROS2 / colcon (rebuild with: cd vrpn_ws && colcon build)
+vrpn_ws/build/
+vrpn_ws/install/
+vrpn_ws/log/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Optional: uncomment to ignore cached TSP output (run make tsp-save to regenerate)
+# tsp_path.npy
+# tsp_polyline.npy

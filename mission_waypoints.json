@@ -1,0 +1,129 @@
+{
+  "simulation": {
+    "start": [
+      -40.0,
+      -40.0
+    ],
+    "goal": [
+      20.0,
+      10.0
+    ],
+    "waypoints": [
+      [
+        -30,
+        -35
+      ],
+      [
+        25,
+        -40
+      ],
+      [
+        -48,
+        20
+      ],
+      [
+        7,
+        30
+      ],
+      [
+        15,
+        -2
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        -10,
+        0
+      ],
+      [
+        -20,
+        -20
+      ]
+    ],
+    "viewport": {
+      "x_min": -55.0,
+      "x_max": 30.0,
+      "y_min": -50.0,
+      "y_max": 35.0
+    },
+    "static_obstacle_names": [],
+    "dynamic_obstacle_names": []
+  },
+  "deployment": {
+    "start": [
+      0.0,
+      0.0
+    ],
+    "goal": [
+      5.0,
+      5.0
+    ],
+    "waypoints": [
+      [
+        0.0,
+        2.9
+      ],
+      [
+        2.7,
+        0.0
+      ],
+      [
+        3.0,
+        4.0
+      ],
+      [
+        5.0,
+        1.5
+      ],
+      [
+        5.0,
+        4.0
+      ]
+    ],
+    "viewport": {
+      "x_min": -0.5,
+      "x_max": 6.0,
+      "y_min": -0.5,
+      "y_max": 6.0
+    },
+    "pose_namespace": "/vrpn_mocap",
+    "static_obstacle_names": [
+      "obstacle1",
+      "obstacle2",
+      "obstacle3",
+      "obstacle4",
+      "obstacle5"
+    ],
+    "dynamic_obstacle_names": [],
+    "static_obstacle_sizes": [
+      [
+        0.6,
+        0.6
+      ],
+      [
+        0.6,
+        0.6
+      ],
+      [
+        0.6,
+        0.6
+      ],
+      [
+        0.6,
+        0.6
+      ],
+      [
+        0.6,
+        0.6
+      ]
+    ],
+    "waypoint_tolerance": 0.25,
+    "pedestrians": {
+      "count": 8,
+      "speed": 1.2,
+      "hz": 25.0
+    }
+  }
+}
