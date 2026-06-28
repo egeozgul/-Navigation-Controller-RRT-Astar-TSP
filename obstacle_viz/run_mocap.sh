@@ -7,6 +7,8 @@ export LD_LIBRARY_PATH=/opt/ros/jazzy/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/o
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+export PYTHONPATH="$PROJECT_DIR/src:${PYTHONPATH:-}"
 
 echo "Starting MoCap obstacle publisher (needs make mocap in another terminal)..."
 python3 "$SCRIPT_DIR/mocap_obstacle_publisher.py" &

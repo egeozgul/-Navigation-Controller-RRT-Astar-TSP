@@ -32,5 +32,8 @@ vrpn_ws/log/
 .DS_Store
 
 # Optional: uncomment to ignore cached TSP output (run make tsp-save to regenerate)
-# tsp_path.npy
-# tsp_polyline.npy
+# data/tsp_path.npy
+# data/tsp_polyline.npy
+
+# Large reference archive (optional — keep locally only)
+# archive/

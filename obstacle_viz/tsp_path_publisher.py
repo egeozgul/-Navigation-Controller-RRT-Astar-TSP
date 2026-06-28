@@ -12,16 +12,12 @@ in sync.  Only the obstacle / waypoint definitions at the top need
 editing to change the environment.
 """
 
-import sys
-import os
-
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, PROJECT_DIR)
-from mission_config import get_mission
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from visualization_msgs.msg import Marker, MarkerArray
+
+from nav_stack.mission.mission_config import get_mission
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Environment  (must match obstacle_publisher.py)

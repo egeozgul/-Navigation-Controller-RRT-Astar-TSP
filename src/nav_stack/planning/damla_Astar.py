@@ -1,7 +1,7 @@
 import heapq #h[0] her zaman minimumdur. h[1], h[2], h[3] sıralı değildir.
 import numpy as np
 import math
-from APF_RRT_Astar import init_environment
+from nav_stack.planning.APF_RRT_Astar import init_environment
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 

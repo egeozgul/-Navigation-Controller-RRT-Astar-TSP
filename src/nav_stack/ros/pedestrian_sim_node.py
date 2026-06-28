@@ -23,7 +23,6 @@ Keyboard:
 import argparse
 import math
 import sys
-import os
 import threading
 import numpy as np
 
@@ -33,11 +32,7 @@ from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import Float32MultiArray, MultiArrayDimension
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-if PROJECT_DIR not in sys.path:
-    sys.path.insert(0, PROJECT_DIR)
-
-from APF_RRT_Astar import apply_stochastic_maneuver
+from nav_stack.planning.APF_RRT_Astar import apply_stochastic_maneuver
 
 # ── Constants ────────────────────────────────────────────────────────────────
 MAX_POOL   = 60
@@ -286,7 +281,7 @@ def main():
     parser = argparse.ArgumentParser(description='Pedestrian simulator')
     # Read defaults from mission_waypoints.json if available
     try:
-        from mission_config import get_mission
+        from nav_stack.mission.mission_config import get_mission
         _ped_cfg = get_mission('deployment').get('pedestrians', {}) if hasattr(get_mission('deployment'), 'get') else {}
         _ped_cfg = _ped_cfg if isinstance(_ped_cfg, dict) else {}
     except Exception:
@@ -300,7 +295,7 @@ def main():
 
     bounds = None
     if args.deploy:
-        from mission_config import get_mission
+        from nav_stack.mission.mission_config import get_mission
         bounds = get_mission('deployment')['viewport']
         print(f'  Deployment mode: bounds={bounds}')
 

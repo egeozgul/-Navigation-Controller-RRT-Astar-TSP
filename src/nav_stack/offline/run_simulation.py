@@ -26,7 +26,7 @@ def run_simulation(
 ):
     import matplotlib.pyplot as plt
     import matplotlib.animation as animation
-    from APF_RRT_Astar import init, update
+    from nav_stack.planning.APF_RRT_Astar import init, update
     plt.close("all")
 
     fig, ax = plt.subplots(figsize=(8, 8), dpi = 50)

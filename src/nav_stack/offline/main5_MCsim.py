@@ -1,8 +1,8 @@
-from run_simulation import run_simulation
+from nav_stack.offline.run_simulation import run_simulation
 import numpy as np
-from TSP_main import bestPath, build_tsp_indices, PSO_TSP, build_full_geometric_path
-from rrt_planner_main import RRTPlanner
-from APF5 import extract_polyline, init_environment
+from nav_stack.planning.TSP_main import bestPath, build_tsp_indices, PSO_TSP, build_full_geometric_path
+from nav_stack.planning.rrt_planner_main import RRTPlanner
+from nav_stack.offline.APF5 import extract_polyline, init_environment
 # ===============================
 # INITIAL SETUP
 # ===============================

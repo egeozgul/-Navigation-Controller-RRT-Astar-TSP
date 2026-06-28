@@ -1,8 +1,7 @@
-from run_simulation import run_simulation
+from nav_stack.offline.run_simulation import run_simulation
 import numpy as np
-from run_simulation import run_simulation
-from APF_RRT_Astar import init_environment
-from rrt_planner_main import RRTPlanner
+from nav_stack.planning.APF_RRT_Astar import init_environment
+from nav_stack.planning.rrt_planner_main import RRTPlanner
 
 # ===============================
 # INITIAL SETUP
@@ -90,8 +89,10 @@ rrt = RRTPlanner(step_size=0.3, max_iterations=2000) #step_size was 0.15 when L 
 # ===============================
 # ANIMATION SETUP
 # ===============================
-full_geometric_path_rrt             = np.load("tsp_path.npy")
-full_geometric_polyline_rrt         = np.load("tsp_polyline.npy")
+from nav_stack.paths import TSP_PATH_NPY, TSP_POLYLINE_NPY
+
+full_geometric_path_rrt             = np.load(str(TSP_PATH_NPY))
+full_geometric_polyline_rrt         = np.load(str(TSP_POLYLINE_NPY))
 q_goal_rrt                          = full_geometric_polyline_rrt[2]
 
 

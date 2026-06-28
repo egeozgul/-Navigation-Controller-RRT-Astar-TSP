@@ -1,8 +1,16 @@
 """Persistent on/off state for planner EMA output filter (shared across nodes)."""
 import os
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATE_FILE = os.path.join(PROJECT_DIR, 'planner_ema_filter.state')
+def _state_file() -> str:
+    try:
+        from nav_stack.paths import ROOT
+        return str(ROOT / 'planner_ema_filter.state')
+    except ImportError:
+        return os.path.normpath(os.path.join(
+            os.path.dirname(__file__), '..', '..', '..', 'planner_ema_filter.state',
+        ))
+
+STATE_FILE = _state_file()
 
 
 def load(create_if_missing=True, default=True):

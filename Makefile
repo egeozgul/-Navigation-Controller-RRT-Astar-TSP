@@ -1,37 +1,5 @@
-# ═══════════════════════════════════════════════════════════════════════════════
 # trajectory_project — Makefile
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-# QUICK START
-# ───────────────────────────────────────────────────
-#
-#   # 1. Start MoCap streaming (Terminal 1):
-#   make mocap
-#   # Or without OptiTrack hardware:
-#   make fake-mocap                      # static poses from fake_mocap_poses.json
-#
-#   # 2. Echo obstacle poses (Terminal 2):
-#   make mocap-echo OBS=obstacle1        # or obstacle2 / obstacle3
-#
-#   # 3. Full ROS2 simulation stack (one terminal):
-#   make stop
-#   make ros                             # wait ~90s for TSP, then plot opens
-#   make stop                            # when done
-#
-#   # Full ROS2 simulation stack (three terminals):
-#   make stop
-#   make ped                             # Terminal 1
-#   make planner                         # Terminal 2  (~90s TSP on startup)
-#   make viz                             # Terminal 3  (after planner ready)
-#   make stop                            # when done
-#
-#   # Offline matplotlib (no ROS):
-#   make tsp-save                        # first time only
-#   make mc
-#
-# Override defaults:  make ped N_PEDS=12 SPEED=1.5 HZ=25
-#
-# ═══════════════════════════════════════════════════════════════════════════════
+# Run `make` or `make help` for commands and quick-start workflows.
 
 .DEFAULT_GOAL := help
 
@@ -51,6 +19,8 @@ OBS         ?= obstacle1
 
 # ── Paths & defaults ───────────────────────────────────────────────────────────
 PROJECT_DIR  = $(shell pwd)
+DATA_DIR     = $(PROJECT_DIR)/data
+PYTHON       = export PYTHONPATH="$(PROJECT_DIR)/src:$$PYTHONPATH" && python3
 OBSTACLE_VIZ = $(PROJECT_DIR)/obstacle_viz
 N_PEDS      ?= 8
 SPEED       ?= 1.2
@@ -67,44 +37,49 @@ HZ          ?= 25
 # ═══════════════════════════════════════════════════════════════════════════════
 help:
 	@echo ""
-	@echo "trajectory_project — available targets"
-	@echo "══════════════════════════════════════════════════════════════════════"
+	@echo "  Navigation Controller — RRT · A* · TSP"
+	@echo "  ────────────────────────────────────────────────────────────────────"
 	@echo ""
-	@echo "MOCAP (OptiTrack → ROS2 via VRPN)"
-	@echo "  make mocap             Connect to MoCap PC and publish obstacle poses"
-	@echo "                         (IP=$(MOCAP_IP)  port=$(MOCAP_PORT))"
-	@echo "  make mocap-echo        Print live pose of one obstacle topic"
-	@echo "                         Override: make mocap-echo OBS=obstacle2"
-	@echo "  make mocap-list        List all active /vrpn_mocap/* topics"
-	@echo "  make fake-mocap        Publish static fake /vrpn_mocap/*/pose (no OptiTrack)"
-	@echo "                         Edit fake_mocap_poses.json (auto-reloaded every 5s)"
-	@echo "  Frame: MoCap Y→map Z; ground plane MoCap X→map X, MoCap Z→map Y"
-	@echo "  Missions: mission_waypoints.json (waypoints, viewport, obstacle pose names)"
+	@echo "  QUICK START"
+	@echo "    make stop && make ros          One terminal: ped + planner + viz"
+	@echo "    make ped / planner / viz       Three terminals (simulation)"
+	@echo "    make fake-mocap + ped-deploy   Deployment lab (6 m × 6 m, no hardware)"
+	@echo "    make tsp-save && make mc       Offline Monte Carlo (no ROS)"
 	@echo ""
-	@echo "OFFLINE (matplotlib, no ROS required)"
-	@echo "  make tsp-save          Compute TSP path → tsp_path.npy + tsp_polyline.npy"
-	@echo "  make tsp               Plot TSP path only (no save)"
-	@echo "  make mc                Monte Carlo: RRT vs A* comparison (needs tsp_path.npy)"
-	@echo "  make mc-astar          Monte Carlo: A* only variant"
-	@echo "  make mc5               Monte Carlo: main5_MCsim variant"
+	@echo "  LIVE STACK"
+	@printf "    %-22s %s\n" "make ros" "Full stack in one terminal (~90 s TSP wait)"
+	@printf "    %-22s %s\n" "make ped" "Pedestrian sim  [N=$(N_PEDS) SPEED=$(SPEED) HZ=$(HZ)]"
+	@printf "    %-22s %s\n" "make ped-deploy" "Deployment viewport  [SPEED=$(SPEED_DEPLOY)]"
+	@printf "    %-22s %s\n" "make planner" "RRT + A* planner (needs /pedestrian_state)"
+	@printf "    %-22s %s\n" "make viz" "Matplotlib visualizer"
+	@printf "    %-22s %s\n" "make stop" "Kill all nodes"
 	@echo ""
-	@echo "ROS2 LIVE STACK"
-	@echo "  make ros               Launch pedestrian sim + planner + visualizer"
-	@echo "  make ped               Pedestrian simulator only  [N_PEDS=$(N_PEDS) SPEED=$(SPEED) HZ=$(HZ)]"
-	@echo "  make ped-deploy        Pedestrian sim in deployment viewport (6m x 6m)"
-	@echo "                         [N_PEDS=$(N_PEDS) SPEED=$(SPEED_DEPLOY) HZ=$(HZ)]"
-	@echo "  make planner           Planner node only (RRT + A*, waits for /pedestrian_state)"
-	@echo "  make viz               Matplotlib visualizer only"
-	@echo "  make rviz              RViz: static sim obstacles + TSP path preview"
-	@echo "  make rviz-mocap        RViz: live MoCap obstacles (run make mocap or fake-mocap first)"
-	@echo "  make stop              Kill all running nodes"
+	@echo "  MOCAP"
+	@printf "    %-22s %s\n" "make mocap" "OptiTrack via VRPN  ($(MOCAP_IP):$(MOCAP_PORT))"
+	@printf "    %-22s %s\n" "make fake-mocap" "Static poses from config/fake_mocap_poses.json"
+	@printf "    %-22s %s\n" "make mocap-echo" "Echo topic  (OBS=$(OBS))"
+	@printf "    %-22s %s\n" "make mocap-list" "List /vrpn_mocap/* topics"
 	@echo ""
-	@echo "OTHER"
-	@echo "  make copy-deps         Copy .py files from ~/Downloads/path_planning-main"
+	@echo "  RVIZ"
+	@printf "    %-22s %s\n" "make rviz" "Static obstacles + TSP path"
+	@printf "    %-22s %s\n" "make rviz-mocap" "Live MoCap obstacles"
 	@echo ""
-	@echo "══════════════════════════════════════════════════════════════════════"
-	@echo "Pedestrian controls (make ped / ped-deploy):  h/j add/remove  u/t speed  p status  q quit"
-	@echo "Planner controls   (make planner): q quit"
+	@echo "  OFFLINE"
+	@printf "    %-22s %s\n" "make tsp-save" "Compute TSP → data/tsp_*.npy"
+	@printf "    %-22s %s\n" "make tsp" "Plot TSP only"
+	@printf "    %-22s %s\n" "make mc" "Monte Carlo: RRT vs A*"
+	@printf "    %-22s %s\n" "make mc-astar" "Monte Carlo: A* only"
+	@printf "    %-22s %s\n" "make mc5" "Monte Carlo: alternate variant"
+	@echo ""
+	@echo "  OTHER"
+	@printf "    %-22s %s\n" "make copy-deps" "Import reference scripts → archive/import_staging/"
+	@echo ""
+	@echo "  CONTROLS"
+	@echo "    Pedestrian sim:  h add  j remove  u/t speed  p status  q quit"
+	@echo "    Planner:         q + Enter quit"
+	@echo ""
+	@echo "  Override:  make ped N_PEDS=12 SPEED=1.5 HZ=25"
+	@echo "  Config:    config/mission_waypoints.json"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -112,8 +87,8 @@ help:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 mocap:
-	@echo "Connecting to MoCap PC at $(MOCAP_IP):$(MOCAP_PORT) ..."
-	@echo "Publishing poses on /vrpn_mocap/obstacle1/pose  obstacle2  obstacle3"
+	@echo "MoCap  →  VRPN client  ($(MOCAP_IP):$(MOCAP_PORT))"
+	@echo "Topics: /vrpn_mocap/obstacle{1,2,3}/pose"
 	@bash -c "$(MOCAP_ENV) && ros2 launch vrpn_mocap client.launch.yaml server:=$(MOCAP_IP) port:=$(MOCAP_PORT)"
 
 mocap-echo:
@@ -124,40 +99,44 @@ mocap-list:
 	@echo "Active MoCap topics:"
 	@bash -c "$(MOCAP_ENV) && ros2 topic list | grep vrpn_mocap"
 
+fake-mocap:
+	@echo "Fake MoCap  →  config/fake_mocap_poses.json  (reloads every 5 s)"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' $(PYTHON) -m nav_stack.ros.fake_mocap_node"
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # OFFLINE — TSP & Monte Carlo
 # ═══════════════════════════════════════════════════════════════════════════════
 
 tsp:
-	@echo "Running TSP planner (plot only, no save)..."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && python3 TSP_main.py"
+	@echo "TSP  →  plot only (no save)"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && $(PYTHON) -m nav_stack.planning.TSP_main"
 
 tsp-save: compute-tsp
 
 compute-tsp:
-	@echo "Computing TSP path and saving .npy files..."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && python3 computeTSP.py"
-	@test -f $(PROJECT_DIR)/tsp_path.npy && test -f $(PROJECT_DIR)/tsp_polyline.npy \
-		|| (echo "ERROR: tsp_path.npy / tsp_polyline.npy were not created." && exit 1)
-	@echo "Saved: tsp_path.npy  tsp_polyline.npy"
+	@echo "TSP  →  computing global path..."
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && $(PYTHON) -m nav_stack.offline.computeTSP"
+	@test -f $(DATA_DIR)/tsp_path.npy && test -f $(DATA_DIR)/tsp_polyline.npy \
+		|| (echo "ERROR: data/tsp_path.npy / data/tsp_polyline.npy were not created." && exit 1)
+	@echo "Saved  data/tsp_path.npy  data/tsp_polyline.npy"
 
 mc:
-	@test -f $(PROJECT_DIR)/tsp_path.npy \
-		|| (echo "ERROR: tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
-	@echo "Running Monte Carlo simulation (RRT vs A*)..."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && python3 main_sim_TSP_PF_RRT+Astar.py"
+	@test -f $(DATA_DIR)/tsp_path.npy \
+		|| (echo "ERROR: data/tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
+	@echo "Monte Carlo  →  RRT vs A*"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && $(PYTHON) -m nav_stack.offline.main_sim_TSP_PF_RRT_astar"
 
 mc-astar:
-	@test -f $(PROJECT_DIR)/tsp_path.npy \
-		|| (echo "ERROR: tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
-	@echo "Running Monte Carlo simulation (A* only)..."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && python3 main_MCsim_TSP_PF_Astar.py"
+	@test -f $(DATA_DIR)/tsp_path.npy \
+		|| (echo "ERROR: data/tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
+	@echo "Monte Carlo  →  A* only"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && $(PYTHON) -m nav_stack.offline.main_MCsim_TSP_PF_Astar"
 
 mc5:
-	@test -f $(PROJECT_DIR)/tsp_path.npy \
-		|| (echo "ERROR: tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
-	@echo "Running Monte Carlo simulation (main5_MCsim)..."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && python3 main5_MCsim.py"
+	@test -f $(DATA_DIR)/tsp_path.npy \
+		|| (echo "ERROR: data/tsp_path.npy not found. Run 'make tsp-save' first." && exit 1)
+	@echo "Monte Carlo  →  alternate variant (main5)"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && $(PYTHON) -m nav_stack.offline.main5_MCsim"
 
 sim: mc
 
@@ -166,39 +145,40 @@ sim: mc
 # ═══════════════════════════════════════════════════════════════════════════════
 
 ros:
-	@echo "Launching full ROS2 stack (pedestrian + planner + visualizer)..."
-	@echo "Planner TSP takes ~90s before the visualizer opens."
+	@echo "ROS stack  →  pedestrian + planner + visualizer"
+	@echo "Note: ~90 s TSP wait before visualizer opens"
 	@bash $(PROJECT_DIR)/scripts/run_ros2_planner.sh
 
 ped:
-	@echo "Starting pedestrian simulator  (N=$(N_PEDS)  speed=$(SPEED) m/s  hz=$(HZ))"
-	@echo "Controls: + add  - remove  ] faster  [ slower  p status  q quit"
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' python3 pedestrian_sim_node.py --n_pedestrians $(N_PEDS) --speed $(SPEED) --hz $(HZ)"
+	@echo "Pedestrian sim  →  N=$(N_PEDS)  speed=$(SPEED) m/s  hz=$(HZ)"
+	@echo "Controls:  h add  j remove  u/t speed  p status  q quit"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' $(PYTHON) -m nav_stack.ros.pedestrian_sim_node --n_pedestrians $(N_PEDS) --speed $(SPEED) --hz $(HZ)"
 
 
 ped-deploy:
-	@echo "Starting pedestrian simulator in deployment mode (6m x 6m viewport)"
+	@echo "Pedestrian sim  →  deployment 6 m × 6 m"
 	@echo "  N=$(N_PEDS)  speed=$(SPEED_DEPLOY) m/s  hz=$(HZ)"
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' python3 pedestrian_sim_node.py --n_pedestrians $(N_PEDS) --speed $(SPEED_DEPLOY) --hz $(HZ) --deploy"
+	@echo "Controls:  h add  j remove  u/t speed  p status  q quit"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' $(PYTHON) -m nav_stack.ros.pedestrian_sim_node --n_pedestrians $(N_PEDS) --speed $(SPEED_DEPLOY) --hz $(HZ) --deploy"
+
 planner:
-	@echo "Starting planner node (RRT + A*)..."
-	@echo "Requires pedestrian_sim_node publishing on /pedestrian_state."
-	@echo "TSP computation may take ~90s on startup."
-	@echo "Controls:  q quit"
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' RCUTILS_COLORIZED_OUTPUT=0 PYTHONUNBUFFERED=1 python3 -u planner_node.py"
+	@echo "Planner  →  RRT + A*  (needs /pedestrian_state)"
+	@echo "Note: TSP may take ~90 s on first start"
+	@echo "Controls:  q + Enter quit"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' RCUTILS_COLORIZED_OUTPUT=0 PYTHONUNBUFFERED=1 $(PYTHON) -u -m nav_stack.ros.planner_node"
 
 viz:
-	@echo "Starting matplotlib visualizer..."
-	@echo "Requires pedestrian_sim_node and planner_node to be running."
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' python3 visualizer_node.py"
+	@echo "Visualizer  →  matplotlib live view"
+	@echo "Requires: pedestrian sim + planner running"
+	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' $(PYTHON) -m nav_stack.ros.visualizer_node"
 
 rviz:
-	@echo "Launching RViz obstacle + TSP path preview..."
+	@echo "RViz  →  static obstacles + TSP path"
 	@bash $(OBSTACLE_VIZ)/run.sh
 
 rviz-mocap:
-	@echo "Launching RViz with live MoCap obstacles..."
-	@echo "Ensure 'make mocap' is running in another terminal."
+	@echo "RViz  →  live MoCap obstacles"
+	@echo "Requires: make mocap or make fake-mocap in another terminal"
 	@bash $(OBSTACLE_VIZ)/run_mocap.sh
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -207,27 +187,22 @@ rviz-mocap:
 
 stop:
 	@echo "Stopping all nodes..."
-	@pkill -f pedestrian_sim_node.py  2>/dev/null || true
-	@pkill -f planner_node.py         2>/dev/null || true
-	@pkill -f visualizer_node.py      2>/dev/null || true
+	@pkill -f nav_stack.ros.pedestrian_sim_node  2>/dev/null || true
+	@pkill -f nav_stack.ros.planner_node         2>/dev/null || true
+	@pkill -f nav_stack.ros.visualizer_node      2>/dev/null || true
 	@pkill -f mocap_obstacle_publisher.py 2>/dev/null || true
 	@pkill -f obstacle_publisher.py   2>/dev/null || true
 	@pkill -f tsp_path_publisher.py   2>/dev/null || true
 	@pkill -f run_ros2_planner.sh     2>/dev/null || true
 	@pkill -f rviz2                   2>/dev/null || true
 	@pkill -f vrpn_mocap              2>/dev/null || true
-	@pkill -f fake_mocap_node.py      2>/dev/null || true
+	@pkill -f nav_stack.ros.fake_mocap_node      2>/dev/null || true
 	@echo "Done."
 
 copy-deps:
 	@test -d $(HOME)/Downloads/path_planning-main \
-		|| (echo "ERROR: path_planning-main not found in ~/Downloads. Unzip it first." && exit 1)
-	@echo "Copying dependency files..."
-	@cp $(HOME)/Downloads/path_planning-main/tsp_pf_rrt+astar_combined/*.py $(PROJECT_DIR)/
-	@echo "Done. Files in $(PROJECT_DIR):"
-	@ls $(PROJECT_DIR)/*.py
-
-fake-mocap:
-	@echo "Starting fake MoCap node (last known lab positions)..."
-	@echo "Edit fake_mocap_poses.json to change positions (auto-reloaded every 5s)"
-	@bash -c "$(ROS_ENV) && cd $(PROJECT_DIR) && RCUTILS_CONSOLE_OUTPUT_FORMAT='[{severity}] {message}' python3 fake_mocap_node.py"
+		|| (echo "ERROR: ~/Downloads/path_planning-main not found." && exit 1)
+	@echo "Import  →  archive/import_staging/  (merge into src/nav_stack/ manually)"
+	@mkdir -p $(PROJECT_DIR)/archive/import_staging
+	@cp $(HOME)/Downloads/path_planning-main/tsp_pf_rrt+astar_combined/*.py $(PROJECT_DIR)/archive/import_staging/
+	@ls $(PROJECT_DIR)/archive/import_staging/*.py

@@ -23,7 +23,7 @@ Optional translation after rotation: MOCAP_OFFSET_X/Y/Z (metres, map frame).
 import os
 from typing import Dict, List, Tuple
 
-from mission_config import get_mission
+from nav_stack.mission.mission_config import get_mission
 
 _deploy = get_mission('deployment')
 MOCAP_POSE_TOPICS = _deploy['static_pose_topics']

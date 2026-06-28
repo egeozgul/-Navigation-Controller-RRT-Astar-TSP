@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 
-from TSP_main import bestPath, build_tsp_indices, PSO_TSP, build_full_geometric_path
-from APF_RRT_Astar import extract_polyline, init_environment
+from nav_stack.planning.TSP_main import bestPath, build_tsp_indices, PSO_TSP, build_full_geometric_path
+from nav_stack.planning.APF_RRT_Astar import extract_polyline, init_environment
 
 
 # ===============================
@@ -180,8 +180,11 @@ full_geometric_polyline = extract_polyline(full_geometric_path, waypoints)
 # SAVE PATH
 # ===============================
 
-np.save("tsp_path.npy", full_geometric_path)
-np.save("tsp_polyline.npy", full_geometric_polyline)
+from nav_stack.paths import TSP_PATH_NPY, TSP_POLYLINE_NPY
+
+TSP_PATH_NPY.parent.mkdir(parents=True, exist_ok=True)
+np.save(str(TSP_PATH_NPY), full_geometric_path)
+np.save(str(TSP_POLYLINE_NPY), full_geometric_polyline)
 
 print("TSP path saved!")
 

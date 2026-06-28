@@ -9,9 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import matplotlib.animation as animation
-from TSP_Rachel import Point
-from TSP_main import *
-from rrt_planner_main import *
+from nav_stack.planning.TSP_Rachel import Point
+from nav_stack.planning.TSP_main import *
+from nav_stack.planning.rrt_planner_main import *
 from datetime import datetime
 # ===============================
 # TSP FUNCTIONS and SETUP

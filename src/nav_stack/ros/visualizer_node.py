@@ -22,8 +22,6 @@ Field overlay (left panel — potential and vector are independent):
   Potential: Potential RRT | Potential A* | Off
   Vector:    Vector RRT    | Vector A*    | Off
 """
-import sys
-import os
 import math
 import threading
 import numpy as np
@@ -34,14 +32,12 @@ import matplotlib.animation as animation
 from matplotlib.patches import Ellipse, Rectangle
 from matplotlib.widgets import RadioButtons
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
-from APF_RRT_Astar import init_environment, potential, total_force, compute_expanded_rects
-from sim_reference_params import (
+from nav_stack.planning.APF_RRT_Astar import init_environment, potential, total_force, compute_expanded_rects
+from nav_stack.params.sim_reference_params import (
     ped_ellipse_axes, ped_collision_ellipse_axes, ped_apf_model, ped_heading_deg,
 )
-from mission_config import get_mission
-from mocap_obstacles import (
+from nav_stack.mission.mission_config import get_mission
+from nav_stack.mission.mocap_obstacles import (
     MOCAP_POSE_TOPICS, MOCAP_DYNAMIC_POSE_TOPICS, MOCAP_STATIC_NAMES,
     MOCAP_DYNAMIC_NAMES, MOCAP_OBSTACLE_COUNT,
     MOCAP_OBSTACLE_SIZES, MOCAP_OBSTACLE_COLORS,

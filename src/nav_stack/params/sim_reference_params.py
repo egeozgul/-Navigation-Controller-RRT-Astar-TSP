@@ -4,7 +4,7 @@ Shared simulation parameters from path_planning-main/tsp_pf_rrt+astar_combined
 """
 import numpy as np
 
-from mission_config import get_mission
+from nav_stack.mission.mission_config import get_mission
 
 _sim_mission = get_mission('simulation')
 

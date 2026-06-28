@@ -9,9 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import matplotlib.animation as animation
-from TSP_main import *
+from nav_stack.planning.TSP_main import *
 from datetime import datetime
-from damla_Astar import *
+from nav_stack.planning.damla_Astar import *
 
 # ===============================
 # TSP FUNCTIONS and SETUP

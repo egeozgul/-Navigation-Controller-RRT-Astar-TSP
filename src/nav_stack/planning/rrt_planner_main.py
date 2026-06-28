@@ -19,10 +19,10 @@ Designed to work with:
 import random
 import numpy as np
 from typing import List, Optional
-from TSP_Rachel import Point
-from sim_reference_params import ped_collision_ellipse_axes, ped_ellipse_dE
-from APF_RRT_Astar import *
-from TSP_main import *
+from nav_stack.planning.TSP_Rachel import Point
+from nav_stack.params.sim_reference_params import ped_collision_ellipse_axes, ped_ellipse_dE
+from nav_stack.planning.APF_RRT_Astar import *
+from nav_stack.planning.TSP_main import *
 
 class RRTNode:
     """

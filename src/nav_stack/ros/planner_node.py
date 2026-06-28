@@ -4,14 +4,10 @@ planner_node.py — ROS2 planner node: TSP global path + RRT and A* local planne
 Deployment: reads obstacle poses from MoCap (/vrpn_mocap/*/pose).
 Simulation: uses hardcoded rectangular obstacles from APF_RRT_Astar.init_environment().
 """
-import sys
 import os
-import threading
 import queue
-
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-if PROJECT_DIR not in sys.path:
-    sys.path.insert(0, PROJECT_DIR)
+import sys
+import threading
 
 import numpy as np
 import rclpy
@@ -28,19 +24,19 @@ from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
 from std_msgs.msg import Float32MultiArray
 
-from APF_RRT_Astar import (
+from nav_stack.planning.APF_RRT_Astar import (
     init_environment, total_force, repulsive_force, repulsive_force_rectangles,
     attractive_force, pull_tangent_force, closest_point_and_tangent_on_polyline,
     compute_expanded_rects, extract_polyline, astar_local, euclidean_distance,
     successors,
 )
-from rrt_planner_main import RRTPlanner, Point as RRTPoint
-from TSP_main import (
+from nav_stack.planning.rrt_planner_main import RRTPlanner, Point as RRTPoint
+from nav_stack.planning.TSP_main import (
     bestPath, build_tsp_indices, PSO_TSP, build_full_geometric_path,
 )
-from mocap_obstacles import mocap_rects_from_poses, mocap_position_to_map
-from mission_config import get_mission
-from sim_reference_params import (
+from nav_stack.mission.mocap_obstacles import mocap_rects_from_poses, mocap_position_to_map
+from nav_stack.mission.mission_config import get_mission
+from nav_stack.params.sim_reference_params import (
     V_ROBOT, DT_SIM, TOLERANCE,
     V_ROBOT_DEPLOY, DT_SIM_DEPLOY, TOLERANCE_DEPLOY,
 )

@@ -12,16 +12,14 @@ Usage:
   make fake-mocap
 """
 import json
-import os
-import sys
 
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import PoseStamped
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-POSES_FILE  = os.path.join(PROJECT_DIR, 'fake_mocap_poses.json')
+from nav_stack.paths import FAKE_MOCAP_POSES_JSON
+POSES_FILE  = str(FAKE_MOCAP_POSES_JSON)
 NAMESPACE   = '/vrpn_mocap'
 
 

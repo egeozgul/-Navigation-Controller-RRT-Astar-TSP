@@ -15,10 +15,17 @@ import numpy as np
 
 MissionMode = Literal['simulation', 'deployment']
 
-DEFAULT_MISSION_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'mission_waypoints.json',
-)
+def _default_mission_file() -> str:
+    try:
+        from nav_stack.paths import MISSION_WAYPOINTS_JSON
+        return str(MISSION_WAYPOINTS_JSON)
+    except ImportError:
+        return os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '..', '..', '..', 'config', 'mission_waypoints.json',
+        )
+
+DEFAULT_MISSION_FILE = os.path.normpath(_default_mission_file())
 
 DEFAULT_POSE_NAMESPACE = os.environ.get('MISSION_POSE_NAMESPACE', '/vrpn_mocap')
 

@@ -9,14 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import matplotlib.animation as animation
-from TSP_main import *
+from nav_stack.planning.TSP_main import *
 from datetime import datetime
-from damla_Astar import *
-from TSP_Rachel import Point
-from rrt_planner_main import RRTPlanner
+from nav_stack.planning.damla_Astar import *
+from nav_stack.planning.TSP_Rachel import Point
 
-from mission_config import get_mission
-from sim_reference_params import (
+from nav_stack.mission.mission_config import get_mission
+from nav_stack.params.sim_reference_params import (
     ped_apf_ellipse_axes, APF_PED_D0_DEPLOY, APF_PED_D0_SIM,
     ped_ellipse_axes, ped_apf_size_factor_from_body, ped_ellipse_dE,
     ped_ellipse_dE_gradient,

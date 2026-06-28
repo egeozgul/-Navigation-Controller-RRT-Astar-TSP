@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 """Publish live MoCap obstacles as RViz markers in the ``map`` frame."""
-import os
-import sys
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
@@ -11,8 +8,7 @@ from visualization_msgs.msg import Marker, MarkerArray
 from tf2_ros import StaticTransformBroadcaster, TransformBroadcaster
 import numpy as np
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from mocap_obstacles import (  # noqa: E402
+from nav_stack.mission.mocap_obstacles import (
     MOCAP_POSE_TOPICS,
     MOCAP_STATIC_NAMES,
     MOCAP_OBSTACLE_SIZES,
