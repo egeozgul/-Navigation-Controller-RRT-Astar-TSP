@@ -65,7 +65,8 @@ Waits ~90 s for TSP, then opens the visualizer. Press `q` in the pedestrian term
 
 ```bash
 make stop
-make ped          # T1 — pedestrians
+make fake-mocap   # T1 — static obstacle poses
+make ped-deploy          # T1 — pedestrians
 make planner      # T2 — planner (TSP ~90 s on first start)
 make viz          # T3 — visualizer (after planner is ready)
 ```
@@ -74,7 +75,7 @@ make viz          # T3 — visualizer (after planner is ready)
 
 ```bash
 make stop
-make fake-mocap   # T1 — static obstacle poses
+make mocap   # T1 — static obstacle poses
 make ped-deploy   # T2 — pedestrians in deployment viewport
 make planner      # T3 — planner (uses MoCap obstacles + deployment mission)
 make viz          # T4 — visualizer
